@@ -10,11 +10,9 @@
 #include <stdlib.h>
 
 /*Definição do Tipo Abstrato de Dados*/
-typedef struct rotas{//Estrutura para as rotas
-	int distancia;
-	int numParadas;
-	float duracao;
-}Rotas;
+typedef struct controlerotas{//Vetor para o controle da matriz de rotas
+	char abreviacao[3];
+}controleRotas;
 
 typedef struct voos{//Estrutura para os voos
 	int distancia;
@@ -24,8 +22,12 @@ typedef struct voos{//Estrutura para os voos
 
 FILE *file;//Ponteiro para arquivos
 
-/*Matrizes para voos e rotas*/
-Rotas **MatrizRotas;
-Voos **MatriVoos;
+/*Matrizes e vetor para voos e rotas*/
+controleRotas *vetorRotas;
+int **MatrizRotas;
+Voos **MatrizVoos;
+
+/*Funções*/
+void GeraGrafoRotas();
 
 #endif
