@@ -7,9 +7,9 @@
 #include "TADGrafo.h"
 #define PARADA "!"
 
-void GeraGrafoRotas(controleRotas *vetorRotas, int **MatrizRotas){
-	char leitura[3], leitura2[3]; 
-	int numAero = 0, indice1, indice2;
+void GeraGrafos(controleRotas *vetorRotas, int **MatrizRotas){
+	char leitura[4], leitura2[4]; 
+	int numAero = 0, indice1, indice2, numParadas, duracao;
 
 	file = fopen("InfoVoo.txt", "r");//Abrindo arquivo para a leitura dos dados
 	if (file == NULL){//Verificando se foi possível abrir o arquivo
@@ -60,6 +60,53 @@ void GeraGrafoRotas(controleRotas *vetorRotas, int **MatrizRotas){
   		MatrizRotas[indice1][indice2] = 1;//Colocando a rota na matriz
   		MatrizRotas[indice2][indice1] = 1;//A rota contrária também existe
   	}
+  	fgetc(file);//Pulando o \n
+
+	MatrizVoos = (Voo**) malloc(numAero * sizeof(Voo*));//Alocação do primeiro vetor da matriz
+	for (int i = 0; i < numAero; i++){ //Percorre as linhas do Vetor de Ponteiros
+       MatrizVoos[i] = (Voo*) malloc(numAero * sizeof(Voo)); //Aloca um Vetor de Inteiros para cada posição do Vetor de Ponteiros.
+       for (int j = 0; j < numAero; j++){ //Percorre o Vetor de Inteiros atual.
+            MatrizVoos[i][j].qtdVoos = 0;//Iniciando a quantidade de voos
+            MatrizVoos[i][j].numVoos = (Voos*) malloc(sizeof(Voos));//Iniciando o vetor de voos
+       }
+  	}
+
+  	while(1){
+  		fscanf(file, "%s", leitura);//Leitura do aeroporto de origem
+  		if(!strcmp(leitura, PARADA)){//Verifica se a leitura recebeu  símbolo de parada
+  			break;
+  		}
+  		fgetc(file);//Pulando um espaço
+  		fscanf(file, "%s", leitura2);//Leitura do aeroporto de destino
+  		fgetc(file);//Pulando um espaço
+  		fscanf(file, "%d", &numParadas);//Leitura da quantidade de paradas
+  		fgetc(file);//Pulando um espaço
+  		fscanf(file, "%d", &duracao);//Leitura da duração do voo em minutos
+  		fgetc(file);//Pulando espaço
+
+  		for(int i = 0; i < numAero; i++){
+	  		if (!strcmp(leitura, vetorRotas[i].abreviacao)){//Procurando a abreviação dentro do vetor
+	  			indice1 = i;//Salvando o índice
+	  		}
+  		}
+  		for(int i = 0; i < numAero; i++){
+	  		if (!strcmp(leitura2, vetorRotas[i].abreviacao)){//Procurando a abreviação dentro do vetor
+	  			indice2 = i;
+	  		}
+  		}
+  		if(MatrizVoos[indice1][indice2].qtdVoos == 0){//Caso nenhum voo foi alocado
+  			MatrizVoos[indice1][indice2].numVoos->numParadas = numParadas;//Setando o numero de paradas
+  			MatrizVoos[indice1][indice2].numVoos->duracao = duracao;//Setando a duração do voo
+  			MatrizVoos[indice1][indice2].qtdVoos++;//Incrementando a quantidade de voos para voos com mesma origem e destino
+  		}else{//Se já existirim voos alocados
+  			MatrizVoos[indice1][indice2].numVoos = (Voos*) realloc(MatrizVoos[indice1][indice2].numVoos, (MatrizVoos[indice1][indice2].qtdVoos + 1) * sizeof(Voos));//Realocando a memória para a quantidade de voos
+  			MatrizVoos[indice1][indice2].numVoos[MatrizVoos[indice1][indice2].qtdVoos].numParadas = numParadas;//Setando o número de paradas
+  			MatrizVoos[indice1][indice2].numVoos[MatrizVoos[indice1][indice2].qtdVoos].duracao = duracao;//Setando a duração do voo
+  			MatrizVoos[indice1][indice2].qtdVoos++;//Incrementando a quantidade de voos
+  		}
+  	}
+
+
 
   	fclose(file);
 }
