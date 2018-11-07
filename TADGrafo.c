@@ -7,10 +7,11 @@
 #include "TADGrafo.h"
 #define PARADA "!"
 
-void GeraGrafos(controleRotas *vetorRotas, int **MatrizRotas){
+void GeraGrafos(){
 	char leitura[4], leitura2[4]; 
-	int numAero = 0, indice1, indice2, numParadas, duracao;
+	int indice1, indice2, numParadas, duracao;
 
+	numAero = 0;
 	file = fopen("InfoVoo.txt", "r");//Abrindo arquivo para a leitura dos dados
 	if (file == NULL){//Verificando se foi possível abrir o arquivo
 		printf("Falha na abertura do arquivo");
@@ -105,8 +106,62 @@ void GeraGrafos(controleRotas *vetorRotas, int **MatrizRotas){
   			MatrizVoos[indice1][indice2].qtdVoos++;//Incrementando a quantidade de voos
   		}
   	}
+  	TamanhoVetorRotas = numAero;
 
+  	fclose(file);//Fechando o arquivo usado
+}
 
+void GeraDotRotas(){
+	file = fopen("GrafoRotas.dot", "w");
+	if(file == NULL){
+		printf("Falha na abertura do arquivo");
+		exit(1);
+	}
+	fprintf(file, "graph GrafoRotas {\n");
+	for(int i = 0; i < TamanhoVetorRotas; i++){
+		for(int j = i; j < TamanhoVetorRotas; j++){
+			if(MatrizRotas[i][j] == 1){
+				fprintf(file, "\t%s -- %s;\n", vetorRotas[i].abreviacao, vetorRotas[j].abreviacao);
+			}
+		}
+	}
+	fprintf(file, "}");
+	fclose(file);
+}
 
-  	fclose(file);
+void GeraMatrizMinima(){
+	MatrizMinima = (Voos**) malloc(numAero * sizeof(Voos*));//Alocação do primeiro vetor da matriz
+	for (int i = 0; i < numAero; i++){ //Percorre as linhas do Vetor de Ponteiros
+       MatrizMinima[i] = (Voos*) malloc(numAero * sizeof(Voos)); //Aloca um Vetor de Inteiros para cada posição do Vetor de Ponteiros.
+       for (int j = 0; j < numAero; j++){ //Percorre o Vetor de Inteiros atual.
+        MatrizMinima[i][j].duracao = 0;
+        MatrizMinima[i][j].numParadas = 0;
+            for(int k = 0; k < MatrizVoos[i][j].qtdVoos; k++){
+            	if(k == 0){
+            		MatrizMinima[i][j].duracao = MatrizVoos[i][j].numVoos[k].duracao;
+            		MatrizMinima[i][j].numParadas = MatrizVoos[i][j].numVoos[k].numParadas;
+            	}else{
+            		if(MatrizVoos[i][j].numVoos[k].duracao < MatrizMinima[i][j].duracao){
+            			MatrizMinima[i][j].duracao = MatrizVoos[i][j].numVoos[k].duracao;
+            			MatrizMinima[i][j].numParadas = MatrizVoos[i][j].numVoos[k].numParadas;	
+            		}
+            	}
+            }
+       }
+  	}
+}
+
+void MenorCaminho(){
+
+}
+
+void VoosDiretos(int indice){//Retorna os voos sem escala de um certo aeroporto
+	for(int i = 0; i < numAero; i++){//Percorrendo as colunas da matriz
+		if(MatrizVoos[indice][i].qtdVoos > 0){//Se existirem voos naquele índice da matriz
+			for(int j = 0; j < MatrizVoos[indice][i].qtdVoos; j++){//Percorrendo o vetor com todos os voos do aeroporto
+				printf("Origem: %s - Destino: %s - Paradas: %d - Duracao(minutos): %d\n",vetorRotas[indice].abreviacao, vetorRotas[i].abreviacao, MatrizVoos[indice][i].numVoos[j].numParadas, MatrizVoos[indice][i].numVoos[j].duracao);
+			}
+		}
+	}
+	printf("\n");
 }
