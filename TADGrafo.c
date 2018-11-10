@@ -129,21 +129,18 @@ void GeraDotRotas(){
 	fclose(file);
 }
 
-void GeraMatrizMinima(){
-	MatrizMinima = (Voos**) malloc(numAero * sizeof(Voos*));//Alocação do primeiro vetor da matriz
+void GeraMatrizMinima(){//Gera uma matriz somente com os menores tempos de voo
+	MatrizMinima = (int**) malloc(numAero * sizeof(int*));//Alocação do primeiro vetor da matriz
 	for (int i = 0; i < numAero; i++){ //Percorre as linhas do Vetor de Ponteiros
-       MatrizMinima[i] = (Voos*) malloc(numAero * sizeof(Voos)); //Aloca um Vetor de Inteiros para cada posição do Vetor de Ponteiros.
+       MatrizMinima[i] = (int*) malloc(numAero * sizeof(int)); //Aloca um Vetor de Inteiros para cada posição do Vetor de Ponteiros.
        for (int j = 0; j < numAero; j++){ //Percorre o Vetor de Inteiros atual.
-        MatrizMinima[i][j].duracao = 0;
-        MatrizMinima[i][j].numParadas = 0;
-            for(int k = 0; k < MatrizVoos[i][j].qtdVoos; k++){
-            	if(k == 0){
-            		MatrizMinima[i][j].duracao = MatrizVoos[i][j].numVoos[k].duracao;
-            		MatrizMinima[i][j].numParadas = MatrizVoos[i][j].numVoos[k].numParadas;
-            	}else{
-            		if(MatrizVoos[i][j].numVoos[k].duracao < MatrizMinima[i][j].duracao){
-            			MatrizMinima[i][j].duracao = MatrizVoos[i][j].numVoos[k].duracao;
-            			MatrizMinima[i][j].numParadas = MatrizVoos[i][j].numVoos[k].numParadas;	
+        MatrizMinima[i][j] = INFINITY;//Coloca todos os valores como infinito inicialmente
+            for(int k = 0; k < MatrizVoos[i][j].qtdVoos; k++){//Percorrendo a matriz na terceira dimensão
+            	if(k == 0){//Caso seja a primeira posição
+            		MatrizMinima[i][j] = MatrizVoos[i][j].numVoos[k].duracao;//O mínimo é definido como o valor da primeira leitura
+            	}else{//Senão os valores deverão ser comparados
+            		if(MatrizVoos[i][j].numVoos[k].duracao < MatrizMinima[i][j]){//Caso o valor lido seja menor que  armazenado
+            			MatrizMinima[i][j] = MatrizVoos[i][j].numVoos[k].duracao;//Ele é definido como atual
             		}
             	}
             }
@@ -151,8 +148,32 @@ void GeraMatrizMinima(){
   	}
 }
 
-void MenorCaminho(){
+int ProcuraSigla(char *sigla){//Procura o índice correspondente a uma certa sigla
+	int i = 0;
+	while(sigla[i]){//Varre toda a string
+		sigla[i] = toupper(sigla[i]);//Coloca todas as letras em caixa alta
+		i++;
+	}
 
+	for(i = 0; i < numAero; i++){//Procura a String dentro do vetor
+		if(!strcmp(vetorRotas[i].abreviacao, sigla)){//Negado pois a função retorna 0 se forem iguais
+			return i;//Retorna o índice
+		}
+	}
+
+	return -1;//Se não encontrar retorna -1
+}
+
+void FloydWarshall(){//Função que procura o caminho mínimo entre todos os vértices que possuem conexão
+	for(int x = 0; x < numAero; x++){
+		for(int y = 0; y < numAero; y++){
+			for(int z = 0; z < numAero; z++){
+				if( MatrizMinima[y][z] > (MatrizMinima[y][x] + MatrizMinima[x][z])){
+					MatrizMinima[y][z] = MatrizMinima[y][x] + MatrizMinima[x][z];
+				}
+			}	
+		}	
+	}
 }
 
 void VoosDiretos(int indice){//Retorna os voos sem escala de um certo aeroporto
