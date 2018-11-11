@@ -176,6 +176,101 @@ void FloydWarshall(){//Função que procura o caminho mínimo entre todos os vé
 	}
 }
 
+void Kruskal(int orig){
+	int aux, i, j, k, dest, primeiro, **arvGer, *vetor;
+	double menorPeso;
+
+    int *arv = (int *) malloc(numAero * sizeof(int));
+    pai = (int *) malloc(numAero * sizeof(int));
+
+	for(i = 0; i < numAero; i++){
+        arv[i] = i;
+		pai[i] = -1;
+	}
+	pai[orig] = orig;
+	while(1){
+		primeiro = 1;
+		for(i = 0; i < numAero; i++){
+			for(j = 0, k = 0; j < numAero, k < numAero; j++, k++){
+              	if(MatrizMinima[i][j] != 0){
+					if(arv[i] != arv[k]){
+						if(primeiro){
+							menorPeso = MatrizMinima[i][j];
+							orig = i;
+							dest = k;
+							primeiro = 0;
+						}else if(menorPeso > MatrizMinima[i][j]){
+                            menorPeso = MatrizMinima[i][j];
+                            orig = i;
+                            dest = k;
+						}
+					}
+				}
+			}
+		}
+		if(primeiro == 1){
+			break;
+		}
+		if(pai[orig] == -1){
+			pai[orig] == dest;
+		}
+		else{
+			pai[dest] == orig;
+		}
+	    for(i = 0; i < numAero; i++){
+	        if(arv[i] == arv[dest]){
+	            arv[i] = arv[orig];
+	        }
+	    }
+	}
+
+    //MOSTRAR OS PAI DE CADA VERTICE E A ARVORE GERADORA
+	printf("\nArvore Geradora Minima Kruskal: \n");
+  	for(i = 0; i < numAero; i++){
+    	if(pai[i] != -1){
+        	printf("%d ", pai[i]);
+    	}
+  	}
+    printf("\n");
+    arvGer = (int **) malloc(numAero * sizeof(int*));
+    for(i = 0; i < numAero; i++){
+        arvGer[i] = (int *) malloc(numAero * sizeof(int));
+        for(j = 0; j < numAero; j++){
+            arvGer[i][j] = 0;
+        }
+    }
+	for(i = 0; i < numAero; i++){
+		aux = pai[i];
+	    arvGer[i][aux] = 1;
+	}
+    for(i = 0; i < numAero; i++){
+        printf("\n");
+        for(j = 0; j < numAero; j++){
+    	    printf("%d ",arvGer[i][j]);
+        }
+    }
+
+    //CAMINHO DA ORIGEM ATÉ O DESTINO
+    /*vetor = (int *) malloc(numAero * sizeof(int));
+    printf("\n\n");
+    if(pai[destino] != -1){
+        for(i = 0; i < numAero; i++){
+            if(pai[destino] == -1){
+               	break;
+            }
+            vetor[i] = pai[destino];
+            destino = pai[destino];
+        }
+        for(i = numAero-1; i >= 0; i--){
+            if(vetor[i] != -1){
+            	printf("%d ", vetor[i]);
+            }
+        }
+    }else{
+        printf("\nNão existe caminho para %d partindo de %d\n", destino, orig);
+    }*/
+}
+
 void VoosDiretos(int indice){//Retorna os voos sem escala de um certo aeroporto
 	for(int i = 0; i < numAero; i++){//Percorrendo as colunas da matriz
 		if(MatrizVoos[indice][i].qtdVoos > 0){//Se existirem voos naquele índice da matriz

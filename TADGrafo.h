@@ -50,6 +50,8 @@ void GeraGrau();//Gera o grau de cada vértice da matriz
 void GeraDotRotas();//Função para a geração do arquivo dot utilizado para a geração do arquivo do grafo
 int ProcuraSigla(char *sigla);//Procura  indice de uma determinada sigla
 void FloydWarshall();//Função que encontra o caminho minimo entre os vertices
+void Kruskal(int orig);
+void RotaAlternativa(int aeroportoDefeito);
 void GeraMatrizMinima();//Gera a matriz com os voos minimos entre cada aeroporto
 void VoosDiretos(int indice);//Printa os voos diretos de um aeroporto
 #endif
