@@ -117,7 +117,26 @@ int main(){
 			break;
 
 			case 5:
-				Kruskal(0);
+
+				matrizResposta = (int**) malloc(numAero * sizeof(int*));//Alocação do primeiro vetor da matriz
+				for (int i = 0; i < numAero; i++){ //Percorre as linhas do Vetor de Ponteiros
+       				matrizResposta[i] = (int*) malloc(numAero * sizeof(int)); //Aloca um Vetor de Inteiros para cada posição do Vetor de Ponteiros.
+       				for (int j = 0; j < numAero; j++){ //Percorre o Vetor de Inteiros atual.
+            			matrizResposta[i][j] = 0;
+       				}
+  				}
+				Prim();
+				for(int i = 0; i < numAero; i++){
+					for(int j = 0; j < numAero; j++){
+						printf(" %d ", matrizResposta[i][j]);
+					}
+					printf("\n");
+				}
+				GeraDotAM();
+				printf(".DOT da árvore mínima gerada.\n");
+				setbuf(stdin, NULL);
+				getchar();
+				
 			break;
 
 			default:

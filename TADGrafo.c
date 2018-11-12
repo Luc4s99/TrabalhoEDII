@@ -106,20 +106,18 @@ void GeraGrafos(){
   			MatrizVoos[indice1][indice2].qtdVoos++;//Incrementando a quantidade de voos
   		}
   	}
-  	TamanhoVetorRotas = numAero;
-
   	fclose(file);//Fechando o arquivo usado
 }
 
-void GeraDotRotas(){
+void GeraDotRotas(){//Gera o arquivo .dot das rotas
 	file = fopen("GrafoRotas.dot", "w");
 	if(file == NULL){
 		printf("Falha na abertura do arquivo");
 		exit(1);
 	}
 	fprintf(file, "graph GrafoRotas {\n");
-	for(int i = 0; i < TamanhoVetorRotas; i++){
-		for(int j = i; j < TamanhoVetorRotas; j++){
+	for(int i = 0; i < numAero; i++){
+		for(int j = i; j < numAero; j++){
 			if(MatrizRotas[i][j] == 1){
 				fprintf(file, "\t%s -- %s;\n", vetorRotas[i].abreviacao, vetorRotas[j].abreviacao);
 			}
@@ -176,99 +174,126 @@ void FloydWarshall(){//Função que procura o caminho mínimo entre todos os vé
 	}
 }
 
-void Kruskal(int orig){
-	int aux, i, j, k, dest, primeiro, **arvGer, *vetor;
-	double menorPeso;
+/*void Prim(int num){//Função de Prim que gera a árvore geradora mínima
+	int verticesVerificados[numAero];
+	int distanciaRelativa[numAero];
+	int nosVizinhos[numAero];
 
-    int *arv = (int *) malloc(numAero * sizeof(int));
-    pai = (int *) malloc(numAero * sizeof(int));
-
-	for(i = 0; i < numAero; i++){
-        arv[i] = i;
-		pai[i] = -1;
+	for(int contador = 0; contador < numAero; contador++){
+		verticesVerificados[contador] = -1;
+		nosVizinhos[contador] = 0;
+		distanciaRelativa[contador] = INFINITY;
 	}
-	pai[orig] = orig;
-	while(1){
-		primeiro = 1;
-		for(i = 0; i < numAero; i++){
-			for(j = 0, k = 0; j < numAero, k < numAero; j++, k++){
-              	if(MatrizMinima[i][j] != 0){
-					if(arv[i] != arv[k]){
-						if(primeiro){
-							menorPeso = MatrizMinima[i][j];
-							orig = i;
-							dest = k;
-							primeiro = 0;
-						}else if(menorPeso > MatrizMinima[i][j]){
-                            menorPeso = MatrizMinima[i][j];
-                            orig = i;
-                            dest = k;
-						}
-					}
-				}
+	
+	distanciaRelativa[0] = 0;
+
+	int pontoAvaliado = num;
+
+	for(int contadorPontoAvaliados = 0; contadorPontoAvaliados < numAero; contadorPontoAvaliados++){
+		for(int contadorVizinhos = 0; contadorVizinhos < numAero; contadorVizinhos++){
+			if((verticesVerificados[contadorVizinhos]) || (contadorVizinhos == pontoAvaliado)){
+				continue;
+			}
+			if((MatrizMinima[pontoAvaliado][contadorVizinhos] > 0) && (MatrizMinima[pontoAvaliado][contadorVizinhos] < distanciaRelativa[contadorVizinhos])){
+				distanciaRelativa[contadorVizinhos] = MatrizMinima[pontoAvaliado][contadorVizinhos];
+				nosVizinhos[contadorVizinhos] = pontoAvaliado;
 			}
 		}
-		if(primeiro == 1){
-			break;
+		verticesVerificados[pontoAvaliado] = 1;
+
+		pontoAvaliado = num;
+		int distanciaComparada = INFINITY;
+
+		for(int contador = 0; contador < numAero; contador++){
+			if(verticesVerificados[contador]){
+				continue;
+			}
+
+			if(distanciaRelativa[contador] < distanciaComparada){
+				distanciaComparada = distanciaRelativa[contador];
+				pontoAvaliado = contador;
+			}
 		}
-		if(pai[orig] == -1){
-			pai[orig] == dest;
-		}
-		else{
-			pai[dest] == orig;
-		}
-	    for(i = 0; i < numAero; i++){
-	        if(arv[i] == arv[dest]){
-	            arv[i] = arv[orig];
-	        }
-	    }
 	}
 
-    //MOSTRAR OS PAI DE CADA VERTICE E A ARVORE GERADORA
-	printf("\nArvore Geradora Minima Kruskal: \n");
-  	for(i = 0; i < numAero; i++){
-    	if(pai[i] != -1){
-        	printf("%d ", pai[i]);
-    	}
+	for(int contador = 1; contador < numAero; contador++){
+		matrizResposta[contador][nosVizinhos[contador]] = MatrizMinima[contador][nosVizinhos[contador]];
+		matrizResposta[nosVizinhos[contador]][contador] = matrizResposta[contador][nosVizinhos[contador]];
+	}
+}*/
+
+void Prim(){
+	int *verticesVerificados = malloc(numAero * sizeof(int));
+	int *distanciaRelativa = malloc(numAero * sizeof(int));
+	int *nosVizinhos = malloc(numAero * sizeof(int));
+	int contVV = 0;
+
+	GeraMatrizMinima();
+
+	for(int i = 0; i < numAero; i++){
+		verticesVerificados[i] = -1;
+		nosVizinhos[i] = 0;
+		distanciaRelativa[i] = INFINITY;
+	}
+
+	distanciaRelativa[0] = 0;
+	int pontoAvaliado = 0;
+
+	for(int i = 0; i < numAero; i++){
+		for(int j = 0; j < numAero; j++){
+			if(verticesVerificados[j] == 1 || j == pontoAvaliado){
+				continue;
+			}
+			if((MatrizMinima[pontoAvaliado][j] > 0) && ((MatrizMinima[pontoAvaliado][j] < distanciaRelativa[j]))){
+				distanciaRelativa[j] = MatrizMinima[pontoAvaliado][j];
+				nosVizinhos[j] = pontoAvaliado;
+			}
+		}
+		verticesVerificados[pontoAvaliado] = 1;
+		contVV++;
+		pontoAvaliado = 0;
+		int distanciaComparada = INFINITY;
+
+			for (int i = 0; i < numAero; ++i){
+				printf("%d\n", distanciaRelativa[i]);
+			}
+
+		for(int k = 1; k < contVV; k++){
+			if(!(verticesVerificados[k])){
+				continue;
+			}
+			if(distanciaRelativa[k] <= distanciaComparada){
+				distanciaComparada = distanciaRelativa[k];
+				pontoAvaliado = k;
+			}
+		}
+	}
+
+  	printf("\n");
+  	for(int i = 1; i < numAero; i++){
+  		matrizResposta[i][nosVizinhos[i]] = MatrizMinima[i][nosVizinhos[i]];
+  		matrizResposta[nosVizinhos[i]][i] = MatrizMinima[i][nosVizinhos[i]];
   	}
-    printf("\n");
-    arvGer = (int **) malloc(numAero * sizeof(int*));
-    for(i = 0; i < numAero; i++){
-        arvGer[i] = (int *) malloc(numAero * sizeof(int));
-        for(j = 0; j < numAero; j++){
-            arvGer[i][j] = 0;
-        }
-    }
-	for(i = 0; i < numAero; i++){
-		aux = pai[i];
-	    arvGer[i][aux] = 1;
-	}
-    for(i = 0; i < numAero; i++){
-        printf("\n");
-        for(j = 0; j < numAero; j++){
-    	    printf("%d ",arvGer[i][j]);
-        }
-    }
+}
 
-    //CAMINHO DA ORIGEM ATÉ O DESTINO
-    /*vetor = (int *) malloc(numAero * sizeof(int));
-    printf("\n\n");
-    if(pai[destino] != -1){
-        for(i = 0; i < numAero; i++){
-            if(pai[destino] == -1){
-               	break;
-            }
-            vetor[i] = pai[destino];
-            destino = pai[destino];
-        }
-        for(i = numAero-1; i >= 0; i--){
-            if(vetor[i] != -1){
-            	printf("%d ", vetor[i]);
-            }
-        }
-    }else{
-        printf("\nNão existe caminho para %d partindo de %d\n", destino, orig);
-    }*/
+void GeraDotAM(){//Função que gera o arquivo .dot da árvore mínima
+	file = fopen("ArvoreMinima.dot", "w");//Criando o arquivo e colocando a opção "w" de write
+	if(file == NULL){//Caso não seja possível criar o arquivo
+		printf("Falha na abertura do arquivo");
+		exit(1);
+	}
+	fprintf(file, "graph GrafoRotas {\n");//Printando o primeiro comando para a geração do grafo
+	for(int i = 0; i < numAero; i++){//Percorrendo a matriz
+		for(int j = i; j < numAero; j++){
+			if(matrizResposta[i][j] != INFINITY && matrizResposta[i][j] != 0){
+				fprintf(file, "\t%s -- %s [label = ""%d""];\n", vetorRotas[i].abreviacao, vetorRotas[j].abreviacao, matrizResposta[i][j]);//Printa as siglas e a distancia entre os dois aeroportos
+			}else{
+				continue;
+			}
+		}
+	}
+	fprintf(file, "}");//Fechamento dos comandos
+	fclose(file);//Fechando o arquivo onde foram feitas as edições
 }
 
 void VoosDiretos(int indice){//Retorna os voos sem escala de um certo aeroporto
