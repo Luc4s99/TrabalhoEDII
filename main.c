@@ -16,16 +16,12 @@ int main(){
 		system("cls");
 		system("clear");
 		printf("\t::::: GERECIADOR DE ROTAS E VOOS :::::\n\n");
-		printf("1 - Mostrar caminho entre dois aeroportos\n\n2 - Mostrar voos de um determinado aeroporto\n\n3- Voo com menor duração entre dois aeroportos\n\n4- Aeroporto fora de servico\n\n5- Arvore Geradora Minima\n\n\tOpcao: ");
+		printf("1 - Mostrar voos de um determinado aeroporto\n\n2- Voo com menor duração entre dois aeroportos\n\n3- Aeroporto fora de servico\n\n4- Arvore Geradora Minima\n\n\tOpcao: ");
 		scanf("%d", &opcao);
 
 		switch(opcao){
 
 			case 1:
-				//Dijkstra(0, 10, custos);
-			break;
-
-			case 2:
 				printf("Digite a sigla do aeroporto: ");
 				scanf("%s", sigla);
 
@@ -44,7 +40,7 @@ int main(){
 
 			break;
 
-			case 3:
+			case 2:
 				GeraMatrizMinima();
 				do{
 					printf("\nSigla do aeroporto de origem: \n");
@@ -68,7 +64,7 @@ int main(){
 
 			break;
 
-			case 4:
+			case 3:
 				GeraMatrizMinima();
 				do{
 					printf("\nSigla do aeroporto de origem: \n");
@@ -116,7 +112,7 @@ int main(){
 
 			break;
 
-			case 5:
+			case 4:
 
 				matrizResposta = (int**) malloc(numAero * sizeof(int*));//Alocação do primeiro vetor da matriz
 				for (int i = 0; i < numAero; i++){ //Percorre as linhas do Vetor de Ponteiros
@@ -126,12 +122,6 @@ int main(){
        				}
   				}
 				Prim();
-				for(int i = 0; i < numAero; i++){
-					for(int j = 0; j < numAero; j++){
-						printf(" %d ", matrizResposta[i][j]);
-					}
-					printf("\n");
-				}
 				GeraDotAM();
 				printf(".DOT da árvore mínima gerada.\n");
 				setbuf(stdin, NULL);

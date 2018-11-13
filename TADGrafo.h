@@ -34,7 +34,6 @@ FILE *file;//Ponteiro para arquivos
 /*Matrizes e vetor para voos e rotas*/
 controleRotas *vetorRotas;//Vetor que possui todas as siglas dos aeroportos lidos no arquivo de entrada, usado para controlar as matrizes
 int **matrizResposta;//Matriz utilizada na geração da árvore mínima, contendo a ligação entre os vértices e seus respctivos pesos
-int *pai;//Vetor usado no algoritmo do menor caminho para salvar os caminhos
 
 int **MatrizRotas;//Matriz para as rotas
 Voo **MatrizVoos;//Matriz para os voos
@@ -43,7 +42,6 @@ int numAero;//Possui o número total de aeroportos lidos no arquivo de entrada
 
 /*Funções*/
 void GeraGrafos();//Função para popular as estruturas de rotas
-void GeraGrau();//Gera o grau de cada vértice da matriz
 void GeraDotRotas();//Função para a geração do arquivo dot utilizado para a geração do arquivo do grafo
 int ProcuraSigla(char *sigla);//Procura  indice de uma determinada sigla
 void FloydWarshall();//Função que encontra o caminho minimo entre os vertices

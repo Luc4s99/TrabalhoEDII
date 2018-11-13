@@ -174,54 +174,6 @@ void FloydWarshall(){//Função que procura o caminho mínimo entre todos os vé
 	}
 }
 
-/*void Prim(int num){//Função de Prim que gera a árvore geradora mínima
-	int verticesVerificados[numAero];
-	int distanciaRelativa[numAero];
-	int nosVizinhos[numAero];
-
-	for(int contador = 0; contador < numAero; contador++){
-		verticesVerificados[contador] = -1;
-		nosVizinhos[contador] = 0;
-		distanciaRelativa[contador] = INFINITY;
-	}
-	
-	distanciaRelativa[0] = 0;
-
-	int pontoAvaliado = num;
-
-	for(int contadorPontoAvaliados = 0; contadorPontoAvaliados < numAero; contadorPontoAvaliados++){
-		for(int contadorVizinhos = 0; contadorVizinhos < numAero; contadorVizinhos++){
-			if((verticesVerificados[contadorVizinhos]) || (contadorVizinhos == pontoAvaliado)){
-				continue;
-			}
-			if((MatrizMinima[pontoAvaliado][contadorVizinhos] > 0) && (MatrizMinima[pontoAvaliado][contadorVizinhos] < distanciaRelativa[contadorVizinhos])){
-				distanciaRelativa[contadorVizinhos] = MatrizMinima[pontoAvaliado][contadorVizinhos];
-				nosVizinhos[contadorVizinhos] = pontoAvaliado;
-			}
-		}
-		verticesVerificados[pontoAvaliado] = 1;
-
-		pontoAvaliado = num;
-		int distanciaComparada = INFINITY;
-
-		for(int contador = 0; contador < numAero; contador++){
-			if(verticesVerificados[contador]){
-				continue;
-			}
-
-			if(distanciaRelativa[contador] < distanciaComparada){
-				distanciaComparada = distanciaRelativa[contador];
-				pontoAvaliado = contador;
-			}
-		}
-	}
-
-	for(int contador = 1; contador < numAero; contador++){
-		matrizResposta[contador][nosVizinhos[contador]] = MatrizMinima[contador][nosVizinhos[contador]];
-		matrizResposta[nosVizinhos[contador]][contador] = matrizResposta[contador][nosVizinhos[contador]];
-	}
-}*/
-
 void Prim(){
 	int *verticesVerificados = malloc(numAero * sizeof(int));
 	int *distanciaRelativa = malloc(numAero * sizeof(int));
@@ -254,10 +206,6 @@ void Prim(){
 		pontoAvaliado = 0;
 		int distanciaComparada = INFINITY;
 
-			for (int i = 0; i < numAero; ++i){
-				printf("%d\n", distanciaRelativa[i]);
-			}
-
 		for(int k = 1; k < contVV; k++){
 			if(!(verticesVerificados[k])){
 				continue;
@@ -269,7 +217,6 @@ void Prim(){
 		}
 	}
 
-  	printf("\n");
   	for(int i = 1; i < numAero; i++){
   		matrizResposta[i][nosVizinhos[i]] = MatrizMinima[i][nosVizinhos[i]];
   		matrizResposta[nosVizinhos[i]][i] = MatrizMinima[i][nosVizinhos[i]];
